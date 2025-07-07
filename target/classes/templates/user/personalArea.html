@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile</title>
+  <link rel="stylesheet" th:href="@{/css/personalArea.css}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="navbar">
+    <a th:href="@{/}" class="logo">
+      <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+    </a>
+    <div class="nav-right">
+      <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+        <a href="/login" class="nav-btn">Login</a>
+        <a href="/register" class="nav-btn">Sign-up</a>
+      </div>
+      <div sec:authorize="isAuthenticated()" class="user-menu">
+        <div class="user-box">
+          <span sec:authentication="name"></span>
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="dropdown">
+          <a href="/profile">My Profile</a>
+          <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="content-container">
+  <h2>Your Area</h2>
+  <div class="globalError">
+    <span class="success" th:if="${successProfile}" th:text="${successProfile}"></span>
+  </div>
+
+  <!-- User info -->
+  <section class="user-info-box">
+    <h3>Your info</h3>
+    <div class="user-details">
+      <p><strong>Name:</strong> <span th:text="${user.name}">Mario</span></p>
+      <p><strong>Surname:</strong> <span th:text="${user.surname}">Rossi</span></p>
+      <p><strong>Email:</strong> <span th:text="${user.email}">mario.rossi@example.com</span></p>
+      <p><strong>Username:</strong> <span th:text="${credentials.username}">marior</span></p>
+	  <a th:if="${oauth != true}" th:href="@{/user/edit}" class="edit-btn">
+	      <i class="fa-solid fa-pen-to-square"></i> Edit Credentials
+	  </a>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="reviews-section">
+    <h2>Your Reviews</h2>
+	<div class="globalError">
+		<span class = "success" th:if="${successDelete}" th:text="${successDelete}"></span>
+		<span class = "success" th:if="${successSave}" th:text="${successSave}"></span>
+	</div>
+    <div class="review-list">
+		<div th:if="${#lists.isEmpty(reviews)}" class="no-reviews-message">
+		    <p>You haven't written any reviews yet.</p>
+		  </div>
+      <div class="review-card" th:each="review : ${reviews}">
+        <div class="review-layout">
+          <!-- Book Info -->
+          <div class="book-info-box">
+            <a th:href="@{'/anyone/book/' + ${review.book.id}}" class="book-link">
+              <img class="book-cover" th:src="${review.book.getImagePath(review.book.coverImageFileName)}" th:alt="${review.book.title}" />
+            </a>
+            <div class="book-meta">
+              <a class="book-title-link" th:href="@{'/anyone/book/' + ${review.book.id}}" th:text="${review.book.title}">Titolo</a>
+              <p>
+                <span th:each="author, stat : ${review.book.authors}">
+                  <span th:text="${author.name + ' ' + author.surname}"></span><span th:if="${!stat.last}">, </span>
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Review content -->
+          <div class="review-content-box">
+            <div class="review-header-row">
+              <span class="review-date" th:text="${#temporals.format(review.date, 'dd-MM-yyyy')}">10-05-2024</span>
+            </div>
+            <h4 th:text="${review.title}">Titolo Recensione</h4>
+            <div class="star-rating-display">
+              <i class="fa-solid fa-star star-dim" th:each="i : ${#numbers.sequence(1,5)}"
+                 th:classappend="${i <= review.vote} ? 'filled' : ''"></i>
+            </div>
+            <p th:text="${review.text}">Testo recensione</p>
+          </div>
+        </div>
+
+        <!-- Action buttons in footer -->
+        <div class="review-actions-footer">
+          <a th:href="@{'/user/review/edit/' + ${review.id} + '?source=user-profile'}"
+ 			title="Edit" class="edit-action">
+            <i class="fas fa-pencil-alt"></i>
+          </a>
+          <a th:href="@{'/user/review/delete/' + ${review.id} + '?source=user-profile'}" title="Delete"
+             onclick="return confirm('Are you sure you want to delete your review?');"
+             class="delete-action">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 SIW Library - All rights reserved</p>
+    <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const userBox = document.querySelector('.user-box');
+    const dropdown = document.querySelector('.dropdown');
+
+    if (userBox && dropdown) {
+      userBox.addEventListener('click', function (e) {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      });
+
+      document.addEventListener('click', function () {
+        dropdown.style.display = 'none';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

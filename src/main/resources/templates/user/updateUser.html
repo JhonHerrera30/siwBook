@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifica Dati Utente</title>
+    <link rel="stylesheet" th:href="@{/css/updateUser.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header>
+    <div class="navbar">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+        </a>
+        <div class="nav-right">
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login" class="nav-btn">Login</a>
+                <a href="/register" class="nav-btn">Sign-up</a>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="user-menu">
+                <div class="user-box">
+                    <span sec:authentication="name"></span>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="dropdown">
+                    <a href="/profile">My Profile</a>
+                    <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="content-container">
+    <div class="title-wrapper">
+        <h2 class="page-title">Edit Your Profile</h2>
+    </div>
+
+    <div class="form-box">
+        <form th:action="@{/user/edit}" th:object="${credentials}" method="post">
+            <!-- Global error -->
+            <div class="globalError">
+                <span class="error" th:if="${genericError}" th:text="${genericError}"></span>
+            </div>
+
+            <!-- Name -->
+            <div class="editable-box">
+                <label><strong>First Name:</strong></label>
+                <div class="edit-field">
+                    <input type="text" th:field="*{user.name}" readonly />
+					<i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                </div>
+                <span class="error" th:if="${nameError}" th:text="${nameError}"></span>
+            </div>
+
+            <!-- Surname -->
+            <div class="editable-box">
+                <label><strong>Last Name:</strong></label>
+                <div class="edit-field">
+                    <input type="text" th:field="*{user.surname}" readonly/>
+					<i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                </div>
+                <span class="error" th:if="${surnameError}" th:text="${surnameError}"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="editable-box">
+                <label><strong>Email:</strong></label>
+                <div class="edit-field">
+                    <input type="email" th:field="*{user.email}" readonly />
+					<i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                </div>
+                <span class="error" th:if="${emailError}" th:text="${emailError}"></span>
+				<span class="error" th:if="${emailAlredyInUseError}" th:text="${emailAlredyInUseError}"></span>
+            </div>
+			
+			<!-- Username -->
+			<div class="editable-box">
+                <label><strong>Username:</strong></label>
+	                <div class="edit-field">
+		              <input type="text" th:field="*{username}" readonly/>
+					  <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+	                </div>
+		             <span class="error" th:if="${usernameAlredyInUse}" th:text="${usernameAlredyInUse}"></span>
+	                <span class="error" th:if="${noUsername}" th:text="${noUsername}"></span>
+            </div>		
+			
+			<div class="title-wrapper">
+			       <h2 class="page-title">Change your password</h2>
+			   </div>
+
+            <!-- Old Password -->
+            <div class="editable-box">
+                <label><strong>Current Password:</strong></label>
+                <div class="edit-field">
+                    <input type="password" name="oldPassword" />
+                </div>
+                <span class="error" th:if="${noPassword}" th:text="${noPassword}"></span>
+                <span class="error" th:if="${passwordError}" th:text="${passwordError}"></span>
+            </div>
+
+            <!-- New Password -->
+            <div class="editable-box">
+                <label><strong>New Password:</strong></label>
+                <div class="edit-field">
+                    <input type="password" name="newPassword" />
+                </div>
+				<span class="error" th:if="${passwordChangeError}" th:text="${passwordChangeError}"></span>
+            </div>
+
+            <!-- Confirm New Password -->
+            <div class="editable-box">
+                <label><strong>Confirm New Password:</strong></label>
+                <div class="edit-field">
+                    <input type="password" name="confirmPassword" />
+                </div>
+                <span class="error" th:if="${passwordMismatchError}" th:text="${passwordMismatchError}"></span>
+            </div>
+
+            <!-- Submit + Cancel -->
+            <div class="form-actions">
+                <button type="submit" class="nav-btn">Save</button>
+                <a href="/profile" class="cancel-button">Cancel</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 SIW Library - All rights reserved</p>
+        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+    </div>
+</footer>
+<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const userBox = document.querySelector('.user-box');
+	        const dropdown = document.querySelector('.dropdown');
+
+	        if (userBox && dropdown) {
+	            userBox.addEventListener('click', function (e) {
+	                e.stopPropagation();
+	                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	            });
+
+	            document.addEventListener('click', function () {
+	                dropdown.style.display = 'none';
+	            });
+	        }
+	    });
+</script>
+<script>
+         function enableEdit(icon) {
+             const fieldContainer = icon.closest('.edit-field');
+             const input = fieldContainer.querySelector('input, textarea');
+
+             if (input) {
+                 input.removeAttribute('readonly');
+                 input.focus();
+                 input.style.backgroundColor = '#fff';
+                 input.style.border = '2px solid #ffc107';
+                 icon.style.color = '#3366cc'; // cambia anche il colore della matita
+             }
+         }
+     </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${author.name + ' ' + author.surname}">Author Details</title>
+  <link rel="stylesheet" th:href="@{/css/author.css}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+	<div class="navbar">
+		        <!-- Logo a sinistra -->
+		        <a th:href="@{/}" class="logo">
+		            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+		        </a>
+
+		        <!-- Area a destra -->
+		        <div class="nav-right">
+		            <!-- SE NON AUTENTICATO -->
+		            <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+		                <a href="/login" class="nav-btn">Login</a>
+		                <a href="/register" class="nav-btn">Sign-up</a>
+		            </div>
+
+		            <!-- SE AUTENTICATO -->
+					<div sec:authorize="isAuthenticated()" class="user-menu">
+					    <div class="user-box">
+					        <span sec:authentication="name"></span>
+					        <i class="fa-solid fa-user"></i>
+					    </div>
+					    <div class="dropdown">
+					        <a href="/profile">My Profile</a>
+					        <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+					    </div>
+					</div>
+		        </div>
+		    </div>
+</header>
+
+<main class="content-container">
+
+  <div class="author-detail-container">
+    <img class="author-image-detail"
+         th:src="@{${author.imagePath}}"
+         th:alt="${author.name + ' ' + author.surname}" />
+
+    <div class="author-text">
+      <div class="author-header">
+		<h2 class="author-name">
+		  <span th:text="${author.name + ' ' + author.surname}">Author Name</span>
+		</h2>
+        <a th:href="@{/anyone/authors}" class="back-button">
+			<i class="fa fa-arrow-left"></i> Back to Authors list</a>
+      </div>
+	  <hr class="author-divider" />
+      <p><strong>Born: </strong> <span th:text="${author.bornYear}"></span></p>
+      <p th:if="${author.deathYear != null}">
+        <strong>Died: </strong> <span th:text="${author.deathYear}"></span>
+      </p>
+      <p>
+		<strong>Nationality: </strong> <span th:text="${author.nationality}"></span>
+	  </p>
+	  <p th:if="${author.description != null}">
+		<strong>Biography: </strong><span th:text="${author.description}" ></span>
+	  </p>
+    </div>
+  </div>
+
+  <section class="books-section">
+    <h2>Books by this Author</h2>
+    <div class="element-grid">
+      <div class="element-card-wrapper" th:each="book : ${author.books}">
+		<div class="element-card" th:onclick="'window.location.href=\'/anyone/book/' + ${book.id} + '\''">
+			   <img class="element-image"
+			   			th:src="${book.getImagePath(book.coverImageFileName)}"
+			   			th:alt="${book.title}" />	   
+          <div class="element-info">
+            <h3>
+              <a th:href="@{'/books/' + ${book.id}}"
+                 class="element-name-link"
+                 th:text="${book.title}">Book Title</a>
+            </h3>
+            <p><strong>Year:</strong> <span th:text="${book.year}"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 SIW Library - All rights reserved</p>
+    <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+  </div>
+</footer>
+
+<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const userBox = document.querySelector('.user-box');
+	        const dropdown = document.querySelector('.dropdown');
+
+	        if (userBox && dropdown) {
+	            userBox.addEventListener('click', function (e) {
+	                e.stopPropagation();
+	                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	            });
+
+	            document.addEventListener('click', function () {
+	                dropdown.style.display = 'none';
+	            });
+	        }
+	    });
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library - Home</title>
+	<link rel="stylesheet" th:href="@{/css/home.css}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <!-- HEADER -->
+	<header>
+	    <div class="navbar">
+	        <!-- Logo a sinistra -->
+	        <a th:href="@{/}" class="logo">
+	            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+	        </a>
+
+	        <!-- Area a destra -->
+	        <div class="nav-right">
+	            <!-- SE NON AUTENTICATO -->
+	            <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+	                <a href="/login" class="nav-btn">Login</a>
+	                <a href="/register" class="nav-btn">Sign-up</a>
+	            </div>
+
+	            <!-- SE AUTENTICATO -->
+				<div sec:authorize="isAuthenticated()" class="user-menu">
+					<div class="user-box">
+					    <span sec:authentication="name"></span>
+	                    <i class="fa-solid fa-user"></i>	
+						</div>
+				    <div class="dropdown">
+				        <a href="/profile">My Profile</a>
+				        <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+				    </div>
+				</div>
+	        </div>
+	    </div>
+	</header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+		<div class="hero-content">
+		    <h2>Discover. Read. Share.</h2>
+		    <p>Explore a world of stories, authors, and reviews shared by fellow book lovers.</p>
+			
+			<p class="review-promo" sec:authorize="!isAuthenticated()">
+			    Want to share your thoughts about a book? <strong><a href="/login">Log in</a></strong> or <strong><a href="/register">sign up</a></strong> to write your own review!
+			</p>
+
+		    <div class="hero-buttons">
+		        <a href="/anyone/books" class="btn">
+					<i class="fa-solid fa-book"></i> Browse Books
+				</a>
+		        <a href="/anyone/authors" class="btn">
+					<i class="fa-solid fa-user-pen"></i> Browse Authors
+				</a>
+		        <a href="/anyone/reviews" class="btn">
+					<i class="fa-solid fa-star"></i> View Reviews
+				</a>
+		    </div>
+		</div>
+    </section>
+	
+	<hr class="section-divider" />
+    <!-- RECOMMENDED BOOKS -->
+	<section class="recommended">
+	  <div class="container">
+	    <h2>Recommended Books</h2>
+		<div class="element-grid">
+		        <div class="element-card-wrapper" th:each="book : ${recommendedBooks}">
+		            <div class="element-card" th:onclick="'window.location.href=\'/anyone/book/' + ${book.id} + '\''">
+						<img class="element-image"
+						     th:src="@{${'/images/books/' + book.coverImageFileName}}"
+						     th:alt="${book.title}" />
+		                <div class="element-info">
+		                    <h3 class="element-name-link" th:text="${book.title}"></h3>
+		                    <p><strong>Year:</strong> <span th:text="${book.year}"></span></p>
+		                    <div class="content-list" th:if="${book.authors != null}">
+		                        <p><strong>Authors:</strong></p>
+		                        <ul>
+		                            <li th:each="author : ${book.authors}">
+		                                <a th:href="@{'/author/' + ${author.id}}" th:text="${author.name + ' ' + author.surname}"></a>
+		                            </li>
+		                        </ul>
+		                    </div>
+							<div class="average-rating-box">
+										<div>
+											<span th:utext="${@starUtils.renderStars(book.averageVote)}"></span>
+										</div>
+										<div class="numeric-average" th:text="'(' + ${#numbers.formatDecimal(book.averageVote, 1, 1)} + ')'">(4.0)</div>
+								    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+	</section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 SIW Library - All rights reserved</p>
+            <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+        </div>
+    </footer>
+	
+	<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const userBox = document.querySelector('.user-box');
+	        const dropdown = document.querySelector('.dropdown');
+
+	        if (userBox && dropdown) {
+	            userBox.addEventListener('click', function (e) {
+	                e.stopPropagation();
+	                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	            });
+
+	            document.addEventListener('click', function () {
+	                dropdown.style.display = 'none';
+	            });
+	        }
+	    });
+	</script>
+
+</body>
+</html>

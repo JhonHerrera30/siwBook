@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Review</title>
+    <link rel="stylesheet" th:href="@{/css/updatereview.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<header>
+    <div class="navbar">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+        </a>
+
+        <div class="nav-right">
+            <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+                <a href="/login" class="nav-btn">Login</a>
+                <a href="/register" class="nav-btn">Sign-up</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="user-menu">
+                <div class="user-box">
+                    <span sec:authentication="name"></span>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="dropdown">
+                    <a href="/profile">My Profile</a>
+                    <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="form-wrapper">
+    <div class="form-left">
+        <img class="book-image-detail"
+             th:src="${review.book.getImagePath(review.book.coverImageFileName)}"
+             th:alt="${review.book.title}" />
+    </div>
+
+    <div class="form-container">
+        <h2>Edit Your Review</h2>
+
+		<form th:action="${source != null} ? @{'/user/review/update/' + ${review.id} + '?source=' + ${source}} : @{'/user/review/update/' + ${review.id}}"
+		      th:object="${review}" method="post" class="review-form">
+            <input type="hidden" th:field="*{id}" />
+
+            <div class="globalError">
+                <span class="error" th:if="${genericError}" th:text="${genericError}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Title</label>
+                <div class="edit-field">
+                    <input type="text" th:field="*{title}" id="title" readonly />
+                    <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                </div>
+                <span class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="text">Review Text</label>
+                <div class="edit-field">
+                    <textarea th:field="*{text}" id="text" rows="5" readonly></textarea>
+                    <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                </div>
+                <span class="error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Rating</label>
+                <div class="star-rating">
+                    <input type="hidden" th:field="*{vote}" id="vote" />
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <span class="error" th:if="${#fields.hasErrors('vote')}" th:errors="*{vote}"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Save Changes</button>
+                <a th:href="${source != null} ? @{'/profile'}: @{'/anyone/book/' + ${review.book.id}}" class="cancel-btn">Cancel</a>
+				
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 SIW Library - All rights reserved</p>
+        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+    </div>
+</footer>
+
+<script>
+    // Gestione stelle rating
+    document.addEventListener("DOMContentLoaded", function () {
+        const stars = document.querySelectorAll(".star-rating i");
+        const voteInput = document.getElementById("vote");
+
+        const currentVote = parseInt(voteInput.value);
+        if (!isNaN(currentVote)) {
+            stars.forEach(s => {
+                if (parseInt(s.dataset.value) <= currentVote) {
+                    s.classList.add("selected");
+                }
+            });
+        }
+
+        stars.forEach(star => {
+            star.addEventListener("click", () => {
+                const value = parseInt(star.dataset.value);
+                voteInput.value = value;
+
+                stars.forEach(s => {
+                    s.classList.toggle("selected", parseInt(s.dataset.value) <= value);
+                });
+            });
+        });
+    });
+</script>
+<script>
+    function enableEdit(icon) {
+        const fieldContainer = icon.closest('.edit-field');
+        const input = fieldContainer.querySelector('input, textarea');
+
+        if (input) {
+            input.removeAttribute('readonly');
+            input.focus();
+            input.style.backgroundColor = '#fff';
+            input.style.border = '2px solid #ffc107';
+            icon.style.color = '#3366cc';
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const stars = document.querySelectorAll(".star-rating i");
+        const voteInput = document.getElementById("vote");
+
+        const currentVote = parseInt(voteInput.value);
+        if (!isNaN(currentVote)) {
+            stars.forEach(s => {
+                if (parseInt(s.dataset.value) <= currentVote) {
+                    s.classList.add("selected");
+                }
+            });
+        }
+
+        stars.forEach(star => {
+            star.addEventListener("click", () => {
+                const value = parseInt(star.dataset.value);
+                voteInput.value = value;
+
+                stars.forEach(s => {
+                    s.classList.toggle("selected", parseInt(s.dataset.value) <= value);
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authors</title>
+    <link rel="stylesheet" th:href="@{/css/authors.css}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+	<div class="navbar">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+        </a>
+		<div class="nav-right">
+			<div class="auth-buttons" sec:authorize="!isAuthenticated()">
+				<a href="/login" class="nav-btn">Login</a>
+				<a href="/register" class="nav-btn">Sign-up</a>
+			</div>
+			<div sec:authorize="isAuthenticated()" class="user-menu">
+				<div class="user-box">
+					<span sec:authentication="name"></span>
+					<i class="fa-solid fa-user"></i>
+				</div>
+				<div class="dropdown">
+					<a href="/profile">My Profile</a>
+					<a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
+<main class="content-container">
+	<div class="page-wrapper">
+    <h2>Our Authors</h2>
+	<form th:action="@{/anyone/authors}" method="get" class="search-form">
+		<input type="text" name="name" placeholder="Search by name..." th:value="${param.name}" />
+		<button type="submit"><i class="fas fa-search"></i></button>
+	</form>
+	<div th:if="${#lists.isEmpty(authors)}">
+		 <p>No authors found with the given title.</p>
+	</div>
+    <div class="author-grid">
+        <div class="author-card" th:each="author : ${authors}" th:onclick="'window.location.href=\'/anyone/author/' + ${author.id} + '\''">
+            <img class="author-image" th:src="@{${author.imagePath}}" alt="Author Image">
+            <h3 class="author-name" th:text="${author.name + ' ' + author.surname}"></h3>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 SIW Library - All rights reserved</p>
+        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+    </div>
+</footer>
+</div>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const userBox = document.querySelector('.user-box');
+		const dropdown = document.querySelector('.dropdown');
+
+		if (userBox && dropdown) {
+			userBox.addEventListener('click', function (e) {
+				e.stopPropagation();
+				dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+			});
+
+			document.addEventListener('click', function () {
+				dropdown.style.display = 'none';
+			});
+		}
+	});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Reviews</title>
+  <link rel="stylesheet" th:href="@{/css/reviews.css}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="navbar">
+    <a th:href="@{/}" class="logo">
+      <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+    </a>
+
+    <div class="nav-right">
+      <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+        <a href="/login" class="nav-btn">Login</a>
+        <a href="/register" class="nav-btn">Sign-up</a>
+      </div>
+
+      <div sec:authorize="isAuthenticated()" class="user-menu">
+        <div class="user-box">
+          <span sec:authentication="name"></span>
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="dropdown">
+          <a href="/profile">My Profile</a>
+          <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="content-container">
+  <h2>All Latest Book Reviews</h2>
+
+  <section class="reviews-section">
+    <div class="review-list">
+		<div class="review-card" th:each="review : ${allReviews}">
+		  <div class="review-layout">
+		    
+			<!-- SINISTRA: Info libro -->
+			<div class="book-info-box">
+			  <a th:href="@{'/anyone/book/' + ${review.book.id}}" class="book-link">
+				<img class="book-cover" th:src="${review.book.getImagePath(review.book.coverImageFileName)}" />
+			  </a>
+			  <div class="book-meta">
+			    <a class="book-title-link" th:href="@{'/anyone/book/' + ${review.book.id}}" th:text="${review.book.title}">Titolo</a>
+			    <p>
+			      <span th:each="author, stat : ${review.book.authors}">
+			        <span th:text="${author.name + ' ' + author.surname}"></span><span th:if="${!stat.last}">, </span>
+			      </span>
+			    </p>
+			  </div>
+			</div>
+			
+			<!-- DESTRA: Recensione -->
+			    <div class="review-content-box">
+			      <div class="review-header-row">
+			        <span class="review-date" th:text="${#temporals.format(review.date, 'dd-MM-yyyy')}">10-05-2024</span>
+			      </div>
+			      <h4 th:text="${review.title}">Titolo Recensione</h4>
+			      <div class="star-rating-display">
+			        <i class="fa-solid fa-star star-dim" th:each="i : ${#numbers.sequence(1,5)}"
+			           th:classappend="${i <= review.vote} ? 'filled' : ''"></i>
+			      </div>
+			      <p th:text="${review.text}">Testo recensione</p>
+			      <p><em>Written by: <span th:text="${review.user.username}">Autore</span></em></p>
+			    </div>
+		  </div>
+		</div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 SIW Library - All rights reserved</p>
+    <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const userBox = document.querySelector('.user-box');
+    const dropdown = document.querySelector('.dropdown');
+
+    if (userBox && dropdown) {
+      userBox.addEventListener('click', function (e) {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      });
+
+      document.addEventListener('click', function () {
+        dropdown.style.display = 'none';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

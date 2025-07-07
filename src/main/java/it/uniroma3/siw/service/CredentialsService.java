@@ -1,0 +1,83 @@
+package it.uniroma3.siw.service;
+
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import it.uniroma3.siw.DTO.UserInfoDTO;
+import it.uniroma3.siw.model.Credentials;
+import it.uniroma3.siw.model.User;
+import it.uniroma3.siw.repository.CredentialsRepository;
+
+@Service
+public class CredentialsService {
+
+    @Autowired
+    protected PasswordEncoder passwordEncoder;
+
+    @Autowired
+    protected CredentialsRepository credentialsRepository;
+
+    @Transactional
+    public Credentials getCredentials(Long id) {
+        Optional<Credentials> result = this.credentialsRepository.findById(id);
+        return result.orElse(null);
+    }
+
+    @Transactional
+    public Credentials getCredentials(String username) {
+        Optional<Credentials> result = this.credentialsRepository.findByUsername(username);
+        return result.orElse(null);
+    }
+    
+    @Transactional
+    public Optional <Credentials> findByUsername(String username) {
+        return this.credentialsRepository.findByUsername(username);
+        
+    }
+
+
+    @Transactional
+    public Credentials saveCredentials(Credentials credentials) {
+        credentials.setRole(Credentials.DEFAULT_ROLE);
+
+        String rawPassword = credentials.getPassword();
+        // Codifica solo se la password non è già codificata (verifica con BCrypt pattern)
+        if (!rawPassword.startsWith("$2a$")) {
+            credentials.setPassword(this.passwordEncoder.encode(rawPassword));
+        }
+
+        return this.credentialsRepository.save(credentials);
+    }
+
+    
+    public boolean existsByUsername(String username) {
+    	return this.credentialsRepository.existsByUsername(username);
+    }
+    
+    
+
+
+    public List<UserInfoDTO> getAllUserInfoDTO() {
+        return StreamSupport.stream(credentialsRepository.findAll().spliterator(), false)
+            .map(cred -> {
+                User user = cred.getUser();
+                return new UserInfoDTO(
+                    cred.getUsername(),
+                    user.getName(),
+                    user.getSurname(),
+                    user.getEmail(),
+                    cred.getRole()
+                );
+            })
+            .collect(Collectors.toList());
+    }
+
+}

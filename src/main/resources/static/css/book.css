@@ -1,0 +1,594 @@
+/* === GENERALI === */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: #fdfcf8;
+    color: #1e1e1e;
+}
+
+header {
+    background-color: #990033;
+    border-bottom: 1px solid #333;
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+    padding: 0 2rem;
+}
+
+.logo-img {
+    height: 150px;
+    object-fit: contain;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Bottoni Login e Signup */
+.nav-btn {
+    background-color: #ffc107;
+    color: #121212;
+    border: 2px solid #ffffff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btn:hover {
+    background-color: #ffd54f;
+    color: #121212;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	border-color: #ffd54f;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 1.5rem; /* aumenta la distanza tra i bottoni */
+}
+
+
+/* User menu */
+.user-menu {
+    position: relative;
+}
+
+.user-box {
+    background-color: #ffc107;
+    color: #121212;
+    border-radius: 30px;
+    border: 2px solid #ffffff;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-box:hover {
+    background-color: #ffd54f;
+    color: #121212;
+	border-color: #ffd54f;
+
+}
+.user-box i {
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 120%;
+    right: 0;
+    background-color: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 12px;
+    min-width: 160px;
+    z-index: 100;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    margin-right: 2.4rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.dropdown a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #f1f1f1;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown a:hover {
+    background: #ffc107;
+    color: #121212;
+}
+
+.logout-icon {
+    margin-left: 0.5rem;
+}
+
+
+/* === CONTENITORE GENERALE === */
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.globalError{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 2rem;
+}
+
+.error{
+	color: #e63946;
+	font-size: 0.9rem;
+	margin-top: 5px;
+	padding: 6px 10px;
+	background-color: #fff0f0;
+	border-left: 3px solid #ff6b6b;
+	border-radius: 4px;
+	max-width: 100%;         
+	width: fit-content;
+	display: inline-block;    
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05);	   
+}
+
+.success {
+    color: #2e7d32; 
+    font-size: 0.9rem;
+    margin-top: 5px;
+    padding: 6px 10px;
+    background-color: #e8f5e9; 
+    border-left: 3px solid #66bb6a; 
+    border-radius: 4px;
+    max-width: 100%;
+    width: fit-content;
+    display: inline-block;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.content-container h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #121212;
+}
+
+/* === DETTAGLIO LIBRO === */
+.book-detail-container {
+  display: flex;
+  align-items: stretch; /* <-- IMPORTANTE */
+  gap: 3rem;
+}
+
+.book-title span {
+    font-size: 3.4rem;
+    font-weight: bold;
+    color: #1e1e1e; /* giallo vivo */
+}
+
+.book-divider {
+    border: none;
+    border-bottom: 2px solid #ccc;
+    margin: 0.5rem 0 1.5rem;
+    width: 75%;
+}
+
+.book-media {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* <-- per distribuire copertina e stelle */
+  flex: 0 0 300px; /* larghezza fissa o max 300px */
+}
+
+.book-image {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.book-image-detail {
+    width: 260px; 
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    flex-shrink: 0; /* evita che si deformi se il contenitore è stretto */
+}
+
+.average-rating-box {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.star-rating-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.star-rating-display i {
+  color: #ccc;
+}
+
+.star-rating-display i.filled {
+  color: #f5b301;
+}
+
+.star-rating-display i.half-filled::before {
+  content: '\f123'; /* Font Awesome half-star icon (fa-star-half-stroke) */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  color: #f5b301;
+}
+
+.star-rating-wrapper {
+  position: relative;
+  display: inline-block;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.star-dim {
+  font-size: 1.4rem;
+}
+
+
+.stars-empty i {
+  color: #ccc; /* stelle grigie */
+}
+
+.stars-full i {
+  color: #ffc107; /* stelle gialle */
+}
+
+.stars-full {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #ffc107 !important; /* yellow stars */
+  pointer-events: none;
+}
+
+
+.numeric-average {
+	margin-top:0.5rem;
+  margin-left: 8px;
+  font-weight: bold;
+  color: #444;
+}
+
+
+.book-text {
+  flex: 1; /* usa tutto lo spazio disponibile accanto all'immagine */
+  max-width: none; /* rimuove il limite rigido */
+  text-align: left;
+}
+
+
+.book-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+
+.back-button {
+  padding: 0.5rem 1rem;
+  background-color: #ffc107;
+  color: #121212;
+  text-decoration: none;
+  border-radius: 30px;
+  transition: background-color 0.2s ease-in-out;
+  white-space: nowrap; /* evita che vada a capo */
+  transition: background 0.4s ease, color 0.4s ease;
+  border: 2px solid #ffffff;
+}
+
+.back-button:hover {
+	background-color: #ffd54f;
+	color: #121212;
+	border-color: #ffd54f;
+}
+
+.desc{
+	font-size: 1.2rem;
+}
+
+/* === GRIGLIA Autori === */
+.element-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    justify-items: center;
+    align-items: stretch;
+}
+
+.element-card-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.element-card {
+	cursor: pointer;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 340px;
+    height: 100%; /* <-- fondamentale per allineamento uniforme */
+	transition: transform 0.3s;
+	border: 3px solid transparent;
+}
+
+.element-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+	border-color: #ffc107;
+}
+
+.element-image {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 10px;
+    display: block;
+    margin: 1rem auto 0;
+}
+
+.element-info {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.element-info h3 {
+    font-size: 2rem;
+    margin-top: 0;
+    color: #1e1e1e;
+}
+
+.element-name-link {
+    text-decoration: none;
+    color: #1e1e1e;
+    transition: color 0.3s ease;
+}
+
+
+.element-info p {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    color: #1e1e1e;
+}
+
+.element-card:hover .element-name-link {
+    color: #ffc107;
+}
+
+/* === SEZIONE RECENSIONI === */
+.reviews-section {
+  margin-top: 4rem;
+  text-align: left;
+}
+
+.reviews-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #121212;
+  text-align: center;
+}
+
+/* Card della recensione */
+.review-card, .user-review {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 5px solid #990033;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.review-header h4,
+.review-header strong {
+  margin: 0;
+}
+
+.review-date {
+  float: right;
+  font-size: 0.9em;
+  color: #777;
+  margin-top: -10px;
+  margin-bottom: 5px;
+}
+
+.user-review {
+  border-left-color: #ffc107;
+  background-color: #fff9e5;
+}
+
+/* Titolo recensione */
+.review-card h4, .user-review h3 {
+  font-size: 1.4rem;
+  color: #1e1e1e;
+  margin-bottom: 0.5rem;
+}
+
+/* Testo della recensione */
+.review-card p, .user-review p {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0.4rem 0;
+}
+
+/* Pulsanti aggiunta/modifica recensione */
+.add-review-btn,
+.edit-review-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  background-color: #ffc107;
+  color: #121212;
+  padding: 0.6rem 1.4rem;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid #ffffff;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-review-btn:hover,
+.edit-review-btn:hover {
+  background-color: #ffd54f;
+  color: #121212;
+  border-color: #ffd54f;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.user-review-actions {
+	margin-top: 1rem;
+	display: flex;
+	justify-content: space-between;
+	padding: 0 1rem;
+}
+
+.user-review-actions i {
+	font-size: 1.4rem;
+	color: #ffc107;
+	transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.user-review-actions i.fa-pencil-alt:hover {
+    color: #3366cc;
+    transform: scale(1.3);
+}
+
+.user-review-actions i.fa-trash:hover {
+    color: #cc0000;
+    transform: scale(1.3);
+}
+
+/* Lista delle altre recensioni */
+.review-list {
+  margin-top: 2rem;
+}
+
+
+
+/* === FOOTER === */
+footer {
+    background-color: #1c1c1c;
+    color: #f1f1f1;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+footer a {
+    color: #ffb300;
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+.book-gallery-scroll {
+  margin-top: 2rem;
+  overflow-x: auto;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.scroll-wrapper {
+  margin-top: 1rem;
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 4px 0;
+  width: 100%;
+  justify-content: center;
+}
+
+
+.scroll-images {
+  display: flex;
+  gap: 16px;
+}
+
+.scroll-image img {
+  height: 120px;
+  width: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.scroll-image img:hover {
+  transform: scale(1.05);
+}
+
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+

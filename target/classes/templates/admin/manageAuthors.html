@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Authors</title>
+    <link rel="stylesheet" th:href="@{/css/manageAuthors.css}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+    <div class="navbar">
+        <a th:href="@{/}" class="logo">
+            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+        </a>
+
+        <div class="nav-right">
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login" class="nav-btn">Login</a>
+                <a href="/register" class="nav-btn">Sign-up</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="user-menu">
+                <div class="user-box">
+                    <span sec:authentication="name"></span>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="dropdown">
+                    <a href="/profile">My Profile</a>
+                    <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="content-container">
+    <div class="content-header">
+        <h2>Manage Authors</h2>
+        <a href="/admin/formNewAuthor" class="nav-btn">+ Add Author</a>
+    </div>
+	<div class="globalError">
+		<span class = "error" th:if="${lastAuthorError}" th:text="${lastAuthorError}"></span>
+		<span class = "success" th:if="${success}" th:text="${success}"></span>
+	</div>
+	
+	<form th:action="@{/admin/manageAuthors}" method="get" class="search-form">
+				<input type="text" name="name" placeholder="Search by name..." th:value="${param.name}" />
+			    <button type="submit"><i class="fas fa-search"></i></button>
+			</form>
+			<div th:if="${#lists.isEmpty(authors)}">
+			    <p>No Author found with the given name.</p>
+			</div>
+    <div class="author-grid">
+        <div class="author-card" th:each="author : ${authors}">
+            <div class="card-actions">
+                <a th:href="@{'/admin/updateAuthor/' + ${author.id}}" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                <a th:href="@{'/admin/author/delete/' + ${author.id}}" title="Delete" onclick="return confirm('Are you sure you want to delete this author?');">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+            <img class="author-image" th:src="@{${author.imagePath}}" alt="Author Image">
+            <h3 class="author-name" th:text="${author.name + ' ' + author.surname}"></h3>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 SIW Library - All rights reserved</p>
+        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userBox = document.querySelector('.user-box');
+        const dropdown = document.querySelector('.dropdown');
+
+        if (userBox && dropdown) {
+            userBox.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', function () {
+                dropdown.style.display = 'none';
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

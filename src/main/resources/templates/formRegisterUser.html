@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/formLogin.css}">
+</head>
+
+<body>
+	<header>
+		<div class="navbar">		
+			<a th:href="@{/}" class="logo">
+				<img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+			</a>
+		 </div>
+	</header>
+
+	<main class="login-wrapper">
+		<form class="login-form" th:action="@{/register}" method="POST">
+		<div>
+			<h2>Sign up</h2>
+		</div>
+		<div class="form-field">
+			<label>Name</label>
+			<span>
+				<input type="text" th:field="${user.name}" />
+			</span>
+			<span class = "error" th:if="${#fields.hasErrors('user.name')}" th:errors="${user.name}"></span>
+			
+		</div>
+		<div class="form-field">
+			<label>Surname</label>
+			<span>
+				<input type="text" th:field="${user.surname}" />
+			</span>
+			<span class = "error" th:if="${#fields.hasErrors('user.surname')}" th:errors="${user.surname}"></span>
+		</div>
+		<div class="form-field">
+			<label>Email</label>
+			<span>
+				<input type="text" th:field="${user.email}" />
+			</span>
+			<span class = "error" th:if="${emailAlreadyInUseError}" th:text="${emailAlreadyInUseError}"></span>
+			<span class = "error" th:if="${#fields.hasErrors('user.email')}" th:errors="${user.email}"></span>
+		</div>
+		<div class="form-field">
+			<label>Username</label>
+			<span>
+				<input type="text" th:field="${credentials.username}" />
+			</span>
+			<span class = "error" th:if="${usernameAlreadyInUseError}" th:text="${usernameAlreadyInUseError}"></span>
+			<span class = "error" th:if="${#fields.hasErrors('credentials.username')}" th:errors="${credentials.username}" ></span>
+		</div>
+		<div class="form-field">
+			<label>Password</label>
+			<span>
+				<input type="password" th:field="${credentials.password}" />
+			</span>
+			<span class = "error" th:if="${#fields.hasErrors('credentials.password')}" th:errors="${credentials.password}" ></span>
+			
+			<label>Confirm Password</label>
+			<span>
+				<input type="password" name="confirmPassword" />	
+			</span>
+			<span class = "error" th:if="${passwordMismatchError}" th:text="${passwordMismatchError}"></span>
+		</div>
+		<div class="form-field">
+			<div class="loginButton">
+				<button type="submit">Sign up</button>
+			</div>
+			<div>
+			     <a th:href="@{/login}">Login</a>
+			</div>
+		</div>
+	</form>
+	</main>
+	<footer>
+		    <div class="container">
+		        <p>&copy; 2025 SIW Library - All rights reserved</p>
+		        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+		    </div>
+		</footer>
+</body>
+
+
+
+</html>

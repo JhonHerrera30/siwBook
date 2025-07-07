@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+	<link rel="stylesheet" th:href="@{/css/formLogin.css}">
+</head>
+<body>
+	<header>
+	       <div class="navbar">		
+			<a th:href="@{/}" class="logo">
+				<img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+			</a>
+	       </div>
+	 </header>
+
+    <main class="login-wrapper">
+        <form class="login-form" th:action="@{/login}" method="get">
+            <h2>Registration Successful</h2>
+			<div class="loginButton">
+				<button type="submit">Go to login</button>
+			</div>
+        </form>
+    </main>
+	
+	<footer>
+	    <div class="container">
+	        <p>&copy; 2025 SIW Library - All rights reserved</p>
+	        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+	    </div>
+	</footer>
+
+</body>
+</html>

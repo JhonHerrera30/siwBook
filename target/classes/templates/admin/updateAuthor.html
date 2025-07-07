@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Author</title>
+    <link rel="stylesheet" th:href="@{/css/updateAuthor.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+	<!-- HEADER -->
+	   <header>
+	       <div class="navbar">
+	           <a th:href="@{/}" class="logo">
+	               <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+	           </a>
+
+	           <div class="nav-right">
+	               <!-- SE NON AUTENTICATO -->
+	               <div sec:authorize="!isAuthenticated()">
+	                   <a href="/login" class="nav-btn">Login</a>
+	                   <a href="/register" class="nav-btn">Sign-up</a>
+	               </div>
+
+	               <!-- SE AUTENTICATO -->
+	               <div sec:authorize="isAuthenticated()" class="user-menu">
+	                   <div class="user-box">
+	                       <span sec:authentication="name"></span>
+	                       <i class="fa-solid fa-user"></i>
+	                   </div>
+	                   <div class="dropdown">
+	                       <a href="/profile">My Profile</a>
+	                       <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+	                   </div>
+	               </div>
+	           </div>
+	       </div>
+	   </header>
+
+<main class="content-container">
+	<div class="title-wrapper">
+	    <h2 class="page-title">Edit Author</h2>
+	    <a href="/admin/manageAuthors" class="nav-btn back-btn">
+	        <i class="fa fa-arrow-left"></i> Go Back
+	    </a>
+	</div>
+
+    <form th:action="@{'/admin/author/update/' + ${author.id}}" method="post" th:object="${author}" enctype="multipart/form-data">
+        
+		<!-- Campi nascosti per inviare l'id del libro e gli id degli autori -->
+		<input type="hidden" name="id" th:value="${author.id}" />
+			    <div th:each="book : ${author.books}">
+			        <input type="hidden" name="books" th:value="${book.id}" />
+			    </div>
+		<div class="globalError">
+				<span class = "error" th:if="${genericError}" th:text="${genericError}"></span>
+				<span class = "success" th:if="${success}" th:text="${success}"></span>
+		</div>
+		<div class="globalError" th:if="${#fields.hasGlobalErrors()}">
+			<span class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
+		</div>
+		
+		<div class="author-detail-container">
+            <div>
+                <img class="author-image-detail" th:src="@{${author.imagePath}}" />
+                <div class="image-upload">
+                    <label for="image" class="edit-button">
+                        <i class="fa fa-pencil-alt"></i> Change Image
+                    </label>
+                    <input type="file" id="image" name="image" style="display:none;" />
+                </div>
+            </div>
+
+            <div class="author-text">
+                <div class="editable-box">
+                    <label><strong>Name:</strong></label>
+                    <div class="edit-field">
+                        <input type="text" name="name" th:value="${author.name}" readonly />
+                        <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                    </div>
+					<span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+				
+				<div class="editable-box">
+				    <label><strong>Surname:</strong></label>
+				    <div class="edit-field">
+				        <input type="text" name="surname" th:value="${author.surname}" readonly />
+				        <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+				    </div>
+					<span class="error" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></span>
+				</div>
+
+                <div class="editable-box">
+                    <label><strong>Born year:</strong></label>
+                    <div class="edit-field">
+                        <input type="date" name="bornYear" th:value="${author.bornYear}" readonly />
+                        <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                    </div>
+					<span class="error" th:if="${#fields.hasErrors('bornYear')}" th:errors="*{botnYear}"></span>
+                </div>
+				
+				<div class="editable-box">
+				    <label><strong>Death year:</strong></label>
+				    <div class="edit-field">
+				        <input type="date" name="deathYear" th:value="${author.deathYear}" readonly />
+				        <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+				    </div>
+					<span class="error" th:if="${#fields.hasErrors('deathYear')}" th:errors="*{deathYear}"></span>
+				</div>
+				
+				<div class="editable-box">
+					<label><strong>Nationality:</strong></label>
+					<div class="edit-field">
+						<input type="text" name="nationality" th:value="${author.nationality}" readonly />
+						<i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+					</div>	
+					<span class="error" th:if="${#fields.hasErrors('nationality')}" th:errors="*{nationality}"></span>
+				</div>
+				
+                <div class="editable-box">
+                    <label><strong>Description:</strong></label>
+                    <div class="edit-field">
+                        <textarea id="description" name="description" rows="5" readonly th:text="${author.description}">Description</textarea>
+                        <i class="fa fa-pencil-alt edit-icon" onclick="enableEdit(this)"></i>
+                    </div>
+					<div class="char-counter"><span id="charCount">0</span>/1000 characters</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="nav-btn">Save Changes</button>
+                    <a th:href="@{'/admin/updateAuthor/' + ${author.id}}" class="cancel-button">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="editable-box">
+        <div id="currentBooks" ><label><strong>Current Books:</strong></label></div>
+		<span class = "error" th:if="${authorErrorBookDuplicate}" th:text="${authorErrorBookDuplicate}"></span>
+		<span class = "error" th:if="${noAuthors}" th:text="${noAuthors}"></span>
+		<div class="element-grid">
+            <div class="element-card-wrapper" th:each="book : ${author.books}">
+                <div class="element-card">
+                    <form th:action="@{'/admin/author/' + ${author.id} + '/remove-book/' + ${book.id}}" method="post">
+                        <button class="remove-book-btn" type="submit">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                    <img class="element-image" th:src="${book.getImagePath(book.coverImageFileName)}" />
+                    <div class="element-info">
+                        <h3 class="element-name-link" th:text="${book.title}"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="editable-box">
+        <button type="button" class="nav-btn" onclick="toggleAvailableAuthors()">Add More Books</button>
+		<form th:action="@{'/admin/updateAuthor/' + ${author.id}}" method="post" class="search-form" style="display: none; margin-top: 1.5rem;" id="bookSearchForm">
+		        <input type="text" name="title" placeholder="Search by title..." th:value="${param.title}" />
+		        <button type="submit"><i class="fas fa-search"></i></button>
+		    </form>
+			<div th:if="${#lists.isEmpty(booksNotInAuthor)}" id="noBooksMessage" style="display: none;">
+			    <p>No books found with the given title.</p>
+			</div>
+		<div class="element-grid" id="availableBooks" style="display: none; margin-top: 2rem;">
+            <div class="element-card-wrapper" th:each="book : ${booksNotInAuthor}">
+                <div class="element-card">
+                    <img class="element-image" th:src="${book.getImagePath(book.coverImageFileName)}" />
+                    <div class="element-info">
+                        <h3 class="element-name-link" th:text="${book.title}"></h3>
+                        <form th:action="@{'/admin/author/' + ${author.id} + '/add-book/' + ${book.id}}" method="post">
+                            <button type="submit" class="nav-btn">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 SIW Library - All rights reserved</p>
+        <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+    </div>
+</footer>
+
+<!-- SCRIPT PER DROPDOWN -->
+   <script>
+       document.addEventListener("DOMContentLoaded", function () {
+           const userBox = document.querySelector('.user-box');
+           const dropdown = document.querySelector('.dropdown');
+
+           if (userBox && dropdown) {
+               userBox.addEventListener('click', function (e) {
+                   e.stopPropagation();
+                   dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+               });
+
+               document.addEventListener('click', function () {
+                   dropdown.style.display = 'none';
+               });
+           }
+       });
+   </script>
+   <script>
+	function toggleAvailableAuthors() {
+	    const booksSection = document.getElementById("availableBooks");
+	    const form = document.getElementById("bookSearchForm");
+	    const noBooksMsg = document.getElementById("noBooksMessage");
+
+	    const isHidden = booksSection.style.display === "none" || booksSection.style.display === "";
+
+	    booksSection.style.display = isHidden ? "grid" : "none";
+	    if (form) form.style.display = isHidden ? "flex" : "none";
+
+	    // Mostra il messaggio solo se si è fatto effettivamente una ricerca
+	    const urlParams = new URLSearchParams(window.location.search);
+	    const hasSearched = urlParams.has("title");
+
+	    if (noBooksMsg) {
+	        noBooksMsg.style.display = isHidden && hasSearched ? "block" : "none";
+	    }
+	}
+   </script>
+
+   <script>
+          function enableEdit(icon) {
+              const fieldContainer = icon.closest('.edit-field');
+              const input = fieldContainer.querySelector('input, textarea');
+
+              if (input) {
+                  input.removeAttribute('readonly');
+                  input.focus();
+                  input.style.backgroundColor = '#fff';
+                  input.style.border = '2px solid #ffc107';
+                  icon.style.color = '#3366cc'; // cambia anche il colore della matita
+              }
+          }
+      </script>
+	  <script>
+	     function updateCharCount(textarea) {
+	         const counter = document.getElementById("charCount");
+	         counter.textContent = textarea.value.length;
+	     }
+
+	     // Inizializza su caricamento, utile in caso di errore di validazione o dati preinseriti
+	     document.addEventListener("DOMContentLoaded", function () {
+	         const textarea = document.getElementById("description");
+	         if (textarea) updateCharCount(textarea);
+	     });
+	     </script>
+		 <script>
+			document.addEventListener("DOMContentLoaded", function () {
+			    const urlParams = new URLSearchParams(window.location.search);
+			    if (urlParams.has("title")) {
+			        toggleAvailableAuthors();
+			    }
+			});
+		 </script>
+
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Author</title>
+    <link rel="stylesheet" th:href="@{/css/formNewAuthor.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+	<!-- HEADER -->
+		   <header>
+		       <div class="navbar">
+		           <a th:href="@{/}" class="logo">
+		               <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+		           </a>
+
+		           <div class="nav-right">
+		               <!-- SE NON AUTENTICATO -->
+		               <div sec:authorize="!isAuthenticated()">
+		                   <a href="/login" class="nav-btn">Login</a>
+		                   <a href="/register" class="nav-btn">Sign-up</a>
+		               </div>
+
+		               <!-- SE AUTENTICATO -->
+		               <div sec:authorize="isAuthenticated()" class="user-menu">
+		                   <div class="user-box">
+		                       <span sec:authentication="name"></span>
+		                       <i class="fa-solid fa-user"></i>
+		                   </div>
+		                   <div class="dropdown">
+		                       <a href="/profile">My Profile</a>
+		                       <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+		                   </div>
+		               </div>
+		           </div>
+		       </div>
+		   </header>
+
+<main class="content-container">
+    <div class="title-wrapper">
+        <h2 class="page-title">Add a New Author</h2>
+		<a th:href="${source != null} ? @{/admin/formNewBook} : @{/admin/manageAuthors}" class="back-btn">
+            <i class="fa fa-arrow-left"></i> Go Back
+        </a>
+    </div>
+
+    <form th:action=" ${source != null} ? @{'/admin/author/new' + '?source=' + ${source}} : @{'/admin/author/new'}" th:object="${author}" method="post" enctype="multipart/form-data">
+        <div class="form-container">
+			<div class="globalError">
+				<span class = "error" th:if="${genericError}" th:text="${genericError}"></span>
+				<span class = "success" th:if="${success}" th:text="${success}"></span>
+			</div>
+			<div class="globalError" th:if="${#fields.hasGlobalErrors()}">
+			    <span class="error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
+			</div>
+
+            <div class="form-group">
+                <label for="name">First Name</label>
+                <input type="text" id="name" th:field="*{name}" placeholder="Enter author's name">
+                <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="surname">Last Name</label>
+                <input type="text" id="surname" th:field="*{surname}" placeholder="Enter author's surname">
+                <span class="error" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="bornYear">Born Year</label>
+				<input type="date" id="bornYear" th:field="*{bornYear}">
+                <span class="error" th:if="${#fields.hasErrors('bornYear')}" th:errors="*{bornYear}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="deathYear">Death Year (optional) </label>
+				<input type="date" id="deathYear" th:field="*{deathYear}">
+				<span class="error" th:if="${#fields.hasErrors('deathYear')}" th:errors="*{deathYear}"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="nationality">Nationality</label>
+                <input type="text" id="nationality" th:field="*{nationality}" placeholder="e.g. Italian, French">
+                <span class="error" th:if="${#fields.hasErrors('nationality')}" th:errors="*{nationality}"></span>
+            </div>
+
+			<div class="form-group">
+			    <label for="description">Short biography</label>
+			    <textarea id="description" th:field="*{description}" placeholder="Write a short biography..." maxlength="1000"
+			              oninput="updateCharCount(this)"></textarea>
+			    <div class="char-counter"><span id="charCount">0</span>/1000 characters</div>
+			</div>
+
+            <div class="form-group">
+                <label for="image">Portrait Image</label>
+                <input type="file" id="image" name="image">
+            </div>
+						      
+
+            <div class="form-actions">
+                <button type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Author</button>
+            </div>
+        </div>
+    </form>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 SIW Library - All rights reserved</p>
+    </div>
+</footer>
+
+<script>
+       document.addEventListener("DOMContentLoaded", function () {
+           const userBox = document.querySelector('.user-box');
+           const dropdown = document.querySelector('.dropdown');
+
+           if (userBox && dropdown) {
+               userBox.addEventListener('click', function (e) {
+                   e.stopPropagation();
+                   dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+               });
+
+               document.addEventListener('click', function () {
+                   dropdown.style.display = 'none';
+               });
+           }
+       });
+   </script>
+   <script>
+   function updateCharCount(textarea) {
+       const counter = document.getElementById("charCount");
+       counter.textContent = textarea.value.length;
+   }
+
+   // Inizializza su caricamento, utile in caso di errore di validazione o dati preinseriti
+   document.addEventListener("DOMContentLoaded", function () {
+       const textarea = document.getElementById("description");
+       if (textarea) updateCharCount(textarea);
+   });
+   </script>
+
+
+
+</body>
+</html>

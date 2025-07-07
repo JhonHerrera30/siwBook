@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Review</title>
+    <link rel="stylesheet" th:href="@{/css/formNewReview.css}" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+	<header>
+		<div class="navbar">
+			        <!-- Logo a sinistra -->
+			        <a th:href="@{/}" class="logo">
+			            <img th:src="@{/images/logo4.png}" alt="SIW Books Logo" class="logo-img">
+			        </a>
+
+			        <!-- Area a destra -->
+			        <div class="nav-right">
+			            <!-- SE NON AUTENTICATO -->
+			            <div class="auth-buttons" sec:authorize="!isAuthenticated()">
+			                <a href="/login" class="nav-btn">Login</a>
+			                <a href="/register" class="nav-btn">Sign-up</a>
+			            </div>
+
+			            <!-- SE AUTENTICATO -->
+						<div sec:authorize="isAuthenticated()" class="user-menu">
+						    <div class="user-box">
+						        <span sec:authentication="name"></span>
+						        <i class="fa-solid fa-user"></i>
+						    </div>
+						    <div class="dropdown">
+						        <a href="/profile">My Profile</a>
+						        <a href="/logout">Logout <i class="fa-solid fa-right-from-bracket logout-icon"></i></a>
+						    </div>
+						</div>
+			        </div>
+			    </div>
+	</header>
+
+	<main class="form-wrapper">
+	    <div class="form-left">
+			<img class="book-image-detail"
+			         th:src="${book.getImagePath(book.coverImageFileName)}"
+			         th:alt="${book.title}" />
+	    </div>
+
+	    <div class="form-container">
+	        <h2>Write Your Review</h2>
+
+	        <form th:action="@{'/user/review/save/' + ${book.id}}" th:object="${review}" method="post" class="review-form">
+				<div class="globalError">
+					<span class = "error" th:if="${genericError}" th:text="${genericError}"></span>
+				</div>
+	            <div class="form-group">
+	                <label for="title">Title</label>
+	                <input type="text" th:field="*{title}" id="title" placeholder="Review title" />
+					<span class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+	            </div>
+
+	            <div class="form-group">
+	                <label for="text">Review Text</label>
+	                <textarea th:field="*{text}" id="text" rows="5" placeholder="Write your thoughts..."></textarea>
+					<span class="error" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></span>
+	            </div>
+				
+				<div class="form-group">
+					<label>Rating</label>
+						<div class="star-rating">
+							<input type="hidden" th:field="*{vote}" id="vote" />
+						       <i class="fa-solid fa-star" data-value="1"></i>
+						       <i class="fa-solid fa-star" data-value="2"></i>
+						       <i class="fa-solid fa-star" data-value="3"></i>
+						       <i class="fa-solid fa-star" data-value="4"></i>							       
+							   <i class="fa-solid fa-star" data-value="5"></i>
+						</div>
+					<span class="error" th:if="${#fields.hasErrors('vote')}" th:errors="*{vote}"></span>
+		        </div>
+
+	            <div class="form-actions">
+	                <button type="submit" class="submit-btn">Submit Review</button>
+	                <a th:href="@{'/anyone/book/' + ${book.id}}" class="cancel-btn">Cancel</a>
+	            </div>
+	        </form>
+	    </div>
+	</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 SIW Library - All rights reserved</p>
+    <p><a href="/contact">Contact</a> | <a href="/privacy">Privacy</a></p>
+  </div>
+</footer>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const stars = document.querySelectorAll(".star-rating i");
+        const voteInput = document.getElementById("vote");
+
+        stars.forEach(star => {
+            star.addEventListener("click", () => {
+                const value = parseInt(star.dataset.value);
+                voteInput.value = value;
+
+                stars.forEach(s => {
+                    s.classList.toggle("selected", parseInt(s.dataset.value) <= value);
+                });
+            });
+        });
+    });
+</script>
+<script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        const userBox = document.querySelector('.user-box');
+	        const dropdown = document.querySelector('.dropdown');
+
+	        if (userBox && dropdown) {
+	            userBox.addEventListener('click', function (e) {
+	                e.stopPropagation();
+	                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+	            });
+
+	            document.addEventListener('click', function () {
+	                dropdown.style.display = 'none';
+	            });
+	        }
+	    });
+</script
+
+</body>
+</html>
